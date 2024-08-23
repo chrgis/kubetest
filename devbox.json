@@ -2,7 +2,6 @@
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.12.0/.schema/devbox.schema.json",
   "packages": [
     "minikube@latest",
-    "kubectl@latest",
     "docker@latest"
   ],
   "shell": {
@@ -11,8 +10,34 @@
     ],
     "scripts": {
       "test": [
-        "echo \"Error: no test specified\" && exit 1"
+        "minikube status",
+        "kubectl get all"
+      ],
+      "start": [
+        "minikube start --driver=docker --docker-env no_proxy=192.168.49.0/24",
+        "kubectl apply -f mongo-config.yaml",
+        "kubectl apply -f mongo-secret.yaml",
+        "kubectl apply -f mongo.yaml",
+        "kubectl apply -f webapp.yaml"
+      ],
+      "stop": [
+        "minikube stop"
+      ],
+      "reset": [
+        "docker system prune",
+        "minikube delete"
+      ],
+      "status": [
+        "minikube status",
+        "echo -- CONFIGS --","kubectl get configmap","kubectl get secret","echo",
+        "echo -- SERVICES --","kubectl get services" ,"echo",
+        "echo -- PODS --","kubectl get pods -o wide","echo"       
+      ],
+      "logs": [
+        "echo -- MONGO --","kubectl logs -l app=mongo --all-containers=true","echo",
+        "echo --WEBAPP --","kubectl logs -l app=webapp --all-containers=true","echo"
       ]
     }
+
   }
 }
